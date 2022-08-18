@@ -67,8 +67,8 @@ class Scraper:
         self.driver.quit()
 
     def print_hot_posts(self):
-        for key in self.hot_posts_urls.keys():
-            print(key, self.hot_posts_urls[key])
+        for id in self.hot_posts_urls.keys():
+            print(id, self.hot_posts_urls[id])
 
     def pull_hot_posts(self):
         self.driver.get("https://www.teamblind.com/topics/Industries/Tech")
@@ -79,8 +79,8 @@ class Scraper:
         for item in items:
             # https://stackoverflow.com/questions/19664253/selenium-how-to-get-the-content-of-href-within-some-targeted-class
             url = item.find_element(By.CSS_SELECTOR, "a").get_attribute("href")
-            post_key = url[-8:]
-            self.hot_posts_urls[post_key] = url
+            post_id = url[-8:]
+            self.hot_posts_urls[post_id] = url
 
     def pull_post_and_comments(self, post_url):
         if not self.is_logged_in:
@@ -99,9 +99,9 @@ class Scraper:
             more_replies = elem.find_elements(By.CLASS_NAME, "btn_more")
 
         expanded_page_source = self.driver.page_source
-        post_key = post_url[-8:]
-        os.makedirs(f"./posts/{post_key}", exist_ok=True)
-        file = open(f"./posts/{post_key}/page_source.html", "w")
+        post_id = post_url[-8:]
+        os.makedirs(f"./posts/{post_id}", exist_ok=True)
+        file = open(f"./posts/{post_id}/page_source.html", "w")
         file.write(expanded_page_source)
         file.close()
 
