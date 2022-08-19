@@ -1,7 +1,6 @@
 import time
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 import _pickle as pickle
 import os
@@ -11,6 +10,7 @@ credentials_file = open("blind_credentials", "r")
 credentials = credentials_file.readlines()
 credentials = list(map(str.strip, credentials))
 credentials_file.close()
+
 
 def dump_to_pickle(filename, data_to_dump):
     file = open(filename, 'wb')

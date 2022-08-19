@@ -19,6 +19,12 @@ class Comment:
             self.replies = []
         self.replies.append(reply)
 
+    def flatten(self):
+        output = [self.content]
+        for reply in self.replies:
+            output.append(reply)
+        return output
+
     def __str__(self):
         string = f"Comment: {self.content}\nReplies:\n"
         for i in range(len(self.replies)):
@@ -43,6 +49,13 @@ class Post:
         if self.comments is None:
             self.comments = []
         self.comments.append(comment)
+
+    def flatten(self):
+        output = [self.title]
+        output.append(self.content)
+        for comment in self.comments:
+            output += comment.flatten()
+        return output
 
     def __str__(self):
         string = f"Title: {self.title}\n"
