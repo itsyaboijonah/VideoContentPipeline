@@ -51,8 +51,7 @@ class Post:
         self.comments.append(comment)
 
     def flatten(self):
-        output = [self.title]
-        output.append(self.content)
+        output = [self.title, self.content]
         for comment in self.comments:
             output += comment.flatten()
         return output
@@ -63,6 +62,7 @@ class Post:
         for i in range(len(self.comments)):
             string += str(self.comments[i])
         return string
+
 
 class Parser:
 

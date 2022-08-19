@@ -14,7 +14,7 @@ for filename in files:
     r, g, b = rgb.getpixel((1, 1))
     width, height = image.size
     new_width = width + 40
-    processed_image = Image.new(image.mode, (new_width, height), (r, g, b))
+    processed_image = Image.new('RGB', (new_width, height), (r, g, b))
     processed_image.paste(image, (20, 0))
     image.close()
     processed_image.save(f"./posts/{post_id}/screenshots/{filename}", "png")
