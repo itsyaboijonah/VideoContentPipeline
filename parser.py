@@ -2,8 +2,6 @@ from bs4 import BeautifulSoup
 import os
 from scraper import dump_to_pickle
 
-post_id = "Cw3SvZy3"
-
 
 class Comment:
 
@@ -105,7 +103,7 @@ class Parser:
             self.post.add_comment(comment)
 
 
-if __name__ == "__main__":
+def parse(post_id):
     print("Starting parser...")
     parser = Parser()
     print("Done! Loading page source...")
@@ -116,4 +114,4 @@ if __name__ == "__main__":
     print(str(parser.post))
     print("Dumping Post to pickle...")
     dump_to_pickle(f"./posts/{post_id}/parsed_post.pkl", parser.post)
-    print("Done!")
+    print("Done Parsing!")

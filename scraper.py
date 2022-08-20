@@ -106,13 +106,16 @@ class Scraper:
         file.close()
 
 
-if __name__ == "__main__":
+def scrape():
     print("Starting scraper...")
     main_driver = Scraper()
     print("Scraper initialized! Logged in is " + str(main_driver.is_logged_in))
-    # print("Pulling hot posts in the Tech category...")
-    # main_driver.pull_hot_posts()
-    # print("Done! The following URLs were pulled:")
-    # main_driver.print_hot_posts()
-    # main_driver.pull_post_and_comments("https://www.teamblind.com/post/Really-annoyed-with-my-new-manager-ex-Amazon-Cw3SvZy3")
-    # main_driver.quit()
+    print("Pulling hot posts in the Tech category...")
+    main_driver.pull_hot_posts()
+    print("Done! The following URLs were pulled:")
+    main_driver.print_hot_posts()
+    post_id = input("Please select a Post ID")
+    main_driver.pull_post_and_comments(main_driver.hot_posts_urls[post_id])
+    print("Scraping Done!")
+    main_driver.quit()
+    return post_id
