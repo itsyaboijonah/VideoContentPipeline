@@ -70,7 +70,7 @@ class Scraper:
         for id in self.hot_posts_urls.keys():
             print(id, self.hot_posts_urls[id])
 
-    def pull_hot_posts(self):
+    def pull_hot_posts(self, already_used):
         self.driver.get("https://www.teamblind.com/topics/Industries/Tech")
         time.sleep(3)
         elem = self.driver.find_element(By.XPATH, "/html/body/div[1]/div/main/div[2]/section/div/div/div[2]/ul")
@@ -80,7 +80,8 @@ class Scraper:
             # https://stackoverflow.com/questions/19664253/selenium-how-to-get-the-content-of-href-within-some-targeted-class
             url = item.find_element(By.CSS_SELECTOR, "a").get_attribute("href")
             post_id = url[-8:]
-            self.hot_posts_urls[post_id] = url
+            if post_id not in already_used:
+                self.hot_posts_urls[post_id] = url
 
     def pull_post_and_comments(self, post_url):
         if not self.is_logged_in:
@@ -106,12 +107,12 @@ class Scraper:
         file.close()
 
 
-def scrape():
+def scrape(already_used):
     print("Starting scraper...")
     main_driver = Scraper()
     print("Scraper initialized! Logged in is " + str(main_driver.is_logged_in))
     print("Pulling hot posts in the Tech category...")
-    main_driver.pull_hot_posts()
+    main_driver.pull_hot_posts(already_used)
     print("Done! The following URLs were pulled:")
     main_driver.print_hot_posts()
     post_id = input("Please select a Post ID")
