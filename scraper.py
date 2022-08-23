@@ -4,6 +4,8 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.common.by import By
 import _pickle as pickle
 import os
+from selenium.webdriver.chrome.options import Options
+
 
 home_URL = "https://www.teamblind.com"
 credentials_file = open("blind_credentials", "r")
@@ -30,7 +32,9 @@ class Scraper:
     def __init__(self):
         caps = DesiredCapabilities().CHROME
         caps["pageLoadStrategy"] = "eager"  # interactive
-        self.driver = webdriver.Chrome(desired_capabilities=caps)
+        opt = Options()
+        opt.add_extension("./4.9.57_0.crx")
+        self.driver = webdriver.Chrome(desired_capabilities=caps, options=opt)
         self.hot_posts_urls = None
         self.is_logged_in = False
         self.login()
@@ -109,14 +113,16 @@ class Scraper:
 
 def scrape(already_used):
     print("Starting scraper...")
-    main_driver = Scraper()
-    print("Scraper initialized! Logged in is " + str(main_driver.is_logged_in))
+    scraper = Scraper()
+    print("Scraper initialized! Logged in is " + str(scraper.is_logged_in))
     print("Pulling hot posts in the Tech category...")
-    main_driver.pull_hot_posts(already_used)
+    scraper.pull_hot_posts(already_used)
     print("Done! The following URLs were pulled:")
-    main_driver.print_hot_posts()
-    post_id = input("Please select a Post ID")
-    main_driver.pull_post_and_comments(main_driver.hot_posts_urls[post_id])
-    print("Scraping Done!")
-    main_driver.quit()
-    return post_id
+    scraper.print_hot_posts()
+    post_ids = list(scraper.hot_posts_urls.keys())
+    for post_id in post_ids:
+        print(f"Scraping data for Post ID {post_id}")
+        scraper.pull_post_and_comments(scraper.hot_posts_urls[post_id])
+        print("Scraping Done!")
+    scraper.quit()
+    return post_ids

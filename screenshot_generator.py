@@ -3,6 +3,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import os
+from selenium.webdriver.chrome.options import Options
 
 
 def generate_screenshots(post_id):
@@ -12,7 +13,9 @@ def generate_screenshots(post_id):
 
     caps = DesiredCapabilities().CHROME
     caps["pageLoadStrategy"] = "eager"  # interactive
-    driver = webdriver.Chrome(desired_capabilities=caps)
+    opt = Options()
+    opt.add_extension("./4.9.57_0.crx")
+    driver = webdriver.Chrome(desired_capabilities=caps, options=opt)
 
     driver.get(f"file://{path_to_project}/posts/{post_id}/page_source.html")
     time.sleep(2)
