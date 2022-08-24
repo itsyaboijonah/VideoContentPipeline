@@ -82,6 +82,8 @@ class Parser:
 
         # Page is structured as post, comments + replies
         soup = BeautifulSoup(self.page_source, 'html.parser')
+        for a in soup.findAll('a', href=True):
+            a.extract()
 
         # Parse post
         title = soup.find(class_="tit_area").find(class_="word-break").get_text()
