@@ -37,7 +37,7 @@ def generate_video(post_id):
 
     video_with_voiceover = concatenate_videoclips(video_clips, method="compose", bg_color=(0,0,0))
     video_voiceover = video_with_voiceover.audio
-    lofi = AudioFileClip("./Ghostrifter-Official-Devyzed-Downtown-Glow.mp3")
+    lofi = AudioFileClip("./bg-music/Ghostrifter-Official-Devyzed-Downtown-Glow.mp3")
     new_video_audio = CompositeAudioClip([video_voiceover, lofi.volumex(0.3)])
     video_final = video_with_voiceover.set_audio(new_video_audio)
     video_final.write_videofile(f"./posts/{post_id}/video.mp4")
