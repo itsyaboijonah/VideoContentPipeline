@@ -9,6 +9,34 @@ import generate_video
 import multiprocessing as mp
 
 
+def parse_post(post_id):
+    post_parser.parse(post_id)
+
+
+def generate_post_screenshots(post_id):
+    screenshot_generator.generate_screenshots(post_id)
+
+
+def process_post_screenshots(post_id):
+    process_screenshots.process_screenshots(post_id)
+
+
+def generate_post_audio(post_id):
+    generate_audio.generate_audio(post_id)
+
+
+def generate_post_video(post_id):
+    generate_video.generate_video(post_id)
+
+
+def post_pipeline(post_id):
+    parse_post(post_id)
+    generate_post_screenshots(post_id)
+    process_post_screenshots(post_id)
+    generate_post_audio(post_id)
+    generate_post_video(post_id)
+
+
 if __name__ == "__main__":
 
     # TODO: Can create unused/already_used lists for each stage of the pipeline to assist with parallelization
@@ -23,8 +51,4 @@ if __name__ == "__main__":
     unused.extend(new_post_ids)
 
     for post_id in unused[:1]:
-        post_parser.parse(post_id)
-        screenshot_generator.generate_screenshots(post_id)
-        process_screenshots.process_screenshots(post_id)
-        generate_audio.generate_audio(post_id)
-        generate_video.generate_video(post_id)
+        post_pipeline(post_id)
