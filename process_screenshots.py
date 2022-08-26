@@ -16,5 +16,11 @@ def process_screenshots(post_id):
         new_width = width + 40
         processed_image = Image.new('RGB', (new_width, height), (r, g, b))
         processed_image.paste(image, (20, 0))
+        if filename == '0.png':
+            width, height = processed_image.size
+            temp_image = processed_image.crop((0, 20, width, height))
+            width, height = temp_image.size
+            processed_image = Image.new('RGB', (width, height+20), (r, g, b))
+            processed_image.paste(temp_image, (0, 0))
         image.close()
         processed_image.save(f"./posts/{post_id}/screenshots/{filename}", "png")

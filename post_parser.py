@@ -86,8 +86,8 @@ class Parser:
             a.extract()
 
         # Parse post
-        title = soup.find(class_="tit_area").find(class_="word-break").get_text()
-        post_content = soup.find(class_="detail word-break").find("p").get_text()
+        title = soup.find(class_="tit_area").find(class_="word-break").get_text(separator='. ')
+        post_content = soup.find(class_="detail word-break").find("p").get_text(separator='. ')
 
         # Populates Post with parsed data
         self.post.set_title(title)
@@ -98,10 +98,10 @@ class Parser:
 
         for i in range(len(comments)):
             comment = Comment()
-            comment.set_content(comments[i].find(class_="detail").find("span").get_text())
+            comment.set_content(comments[i].find(class_="detail").find("span").get_text(separator='. '))
             replies = comments[i].find_all(class_="reply")[1].findChild("ul").findChildren("li", recursive=False)
             for j in range(min(len(replies), 5)):
-                comment.add_reply(replies[j].find(class_="detail").find("span").get_text())
+                comment.add_reply(replies[j].find(class_="detail").find("span").get_text(separator='. '))
             self.post.add_comment(comment)
 
 
