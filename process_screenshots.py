@@ -2,6 +2,8 @@ from PIL import Image
 from os import listdir
 from os.path import isfile, join
 
+resize_factor = 1.8
+
 
 def process_screenshots(post_id):
     # Gets list of png filenames to edit
@@ -23,4 +25,5 @@ def process_screenshots(post_id):
             processed_image = Image.new('RGB', (width, height+20), (r, g, b))
             processed_image.paste(temp_image, (0, 0))
         image.close()
-        processed_image.save(f"./posts/{post_id}/screenshots/{filename}", "png")
+        resized_image = processed_image.resize((int(round(resize_factor*processed_image.width)), int(round(resize_factor*processed_image.height))), Image.ANTIALIAS)
+        resized_image.save(f"./posts/{post_id}/screenshots/{filename}", "png")

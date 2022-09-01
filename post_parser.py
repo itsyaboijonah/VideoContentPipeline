@@ -19,12 +19,16 @@ class Comment:
 
     def flatten(self):
         output = [self.content]
+        if self.replies is None:
+            return output
         for reply in self.replies:
             output.append(reply)
         return output
 
     def __str__(self):
         string = f"Comment: {self.content}\nReplies:\n"
+        if not self.replies:
+            return string
         for i in range(len(self.replies)):
             string += f"    - {self.replies[i]}\n"
         return string
@@ -50,6 +54,8 @@ class Post:
 
     def flatten(self):
         output = [self.title, self.content]
+        if self.comments is None:
+            return output
         for comment in self.comments:
             output += comment.flatten()
         return output
@@ -57,6 +63,8 @@ class Post:
     def __str__(self):
         string = f"Title: {self.title}\n"
         string += f"Content: {self.content}\n"
+        if not self.comments:
+            return string
         for i in range(len(self.comments)):
             string += str(self.comments[i])
         return string
@@ -95,11 +103,16 @@ class Parser:
 
         # Parse comments and replies
         comments = soup.find(class_="topic_comments_wrap").find("ul").findChildren("li", recursive=False)
+        if not comments:
+            return
 
         for i in range(len(comments)):
             comment = Comment()
             comment.set_content(comments[i].find(class_="detail").find("span").get_text(separator='. '))
             replies = comments[i].find_all(class_="reply")[1].findChild("ul").findChildren("li", recursive=False)
+            if not replies:
+                self.post.add_comment(comment)
+                continue
             for j in range(min(len(replies), 5)):
                 comment.add_reply(replies[j].find(class_="detail").find("span").get_text(separator='. '))
             self.post.add_comment(comment)

@@ -47,7 +47,7 @@ if __name__ == "__main__":
         elif len(post_id) == 8:
             unused.append(post_id)
 
-    new_post_ids = []  # scraper.scrape(already_used)
+    new_post_ids = scraper.scrape(already_used)
     unused.extend(new_post_ids)
 
     for post_id in unused[:1]:
