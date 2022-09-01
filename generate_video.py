@@ -2,7 +2,7 @@ from moviepy.editor import *
 from os import listdir, makedirs
 from os.path import isfile, join
 import re
-from moviepy.video.fx.fadeout import fadeout
+import random
 
 
 def add_image_to_audio(image_path, audio_path, output_path):
@@ -69,14 +69,17 @@ def generate_video_from_clips(post_id):
 
     new_video_audio = CompositeAudioClip([video_voiceover, bgm.volumex(0.2)])
     video_with_final_audio = video_with_voiceover.set_audio(new_video_audio)
-    bg_video = VideoFileClip('./bg-video/bg-video2.mp4')
+    bg_video = VideoFileClip(f'./bg-video/bg-video{random.randint(0,6)}.mp4')
     bg_video = bg_video.rotate(90)
+    if random.randint(0, 2):
+        bg_video = bg_video.mirror_x()
     while bg_video.duration < video_with_final_audio.duration:
         bg_video = concatenate_videoclips([bg_video, bg_video])
     video_final = CompositeVideoClip([bg_video, video_with_final_audio.set_position('center')], use_bgclip=True)
     # video_final = fadeout(video_final, 2)
     # Tuned codec and bitrate for better quality/filesize ratio
-    video_final.write_videofile(f"./posts/{post_id}/video.mp4", codec='libx264', bitrate='3000k')
+    makedirs(f"./videos", exist_ok=True)
+    video_final.write_videofile(f"./videos/{post_id}.mp4", codec='libx264', bitrate='3000k')
 
 
 def generate_video(post_id):
