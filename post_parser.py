@@ -3,14 +3,56 @@ import os
 from scraper import dump_to_pickle
 
 
-class Comment:
+# TODO: Add username to each post/comment/reply so that different tts voices can be used for each commenter
+class Reply:
 
     def __init__(self):
+        self.author = None
         self.content = None
-        self.replies = None
+        self.likes = None
+
+    def set_author(self, author):
+        self.author = author
 
     def set_content(self, content):
         self.content = content
+
+    def set_likes(self, num_likes):
+        self.likes = num_likes
+
+    def flatten(self):
+        output = [self.author, self.content, self.likes]
+        return output
+
+    def __str__(self):
+        string = f"  Reply:\n" \
+                 f"    Author: {self.author}\n" \
+                 f"    Comment: {self.content}\n" \
+                 f"    Likes: {self.likes}\n"
+        return string
+
+
+class Comment:
+
+    def __init__(self):
+
+        self.author = None
+        self.content = None
+        self.likes = None
+        self.num_replies = None
+        self.replies = None
+
+    def set_author(self, author):
+        self.author = author
+
+    def set_content(self, content):
+        self.content = content
+
+    def set_likes(self, num_likes):
+        self.likes = num_likes
+
+    def set_num_replies(self, num_replies):
+        self.num_replies = num_replies
 
     def add_reply(self, reply):
         if self.replies is None:
@@ -18,19 +60,23 @@ class Comment:
         self.replies.append(reply)
 
     def flatten(self):
-        output = [self.content]
+        output = [self.author, self.content, self.likes]
         if self.replies is None:
             return output
         for reply in self.replies:
-            output.append(reply)
+            output.append(reply.flatten())
         return output
 
     def __str__(self):
-        string = f"Comment: {self.content}\nReplies:\n"
+        string = f"Comment:\n" \
+                 f"  Author: {self.author}\n" \
+                 f"  Comment: {self.content}\n" \
+                 f"  Likes: {self.likes}\n" \
+                 f"  Number of Replies: {self.num_replies}\n"
         if not self.replies:
             return string
         for i in range(len(self.replies)):
-            string += f"    - {self.replies[i]}\n"
+            string += str(self.replies[i])
         return string
 
 
@@ -38,14 +84,26 @@ class Post:
 
     def __init__(self):
         self.title = None
+        self.author = None
         self.content = None
+        self.likes = None
+        self.num_comments = None
         self.comments = None
 
     def set_title(self, title):
         self.title = title
 
+    def set_author(self, author):
+        self.author = author
+
     def set_content(self, content):
         self.content = content
+
+    def set_likes(self, num_likes):
+        self.likes = num_likes
+
+    def set_num_comments(self, num_comments):
+        self.num_comments = num_comments
 
     def add_comment(self, comment: Comment):
         if self.comments is None:
@@ -53,7 +111,7 @@ class Post:
         self.comments.append(comment)
 
     def flatten(self):
-        output = [self.title, self.content]
+        output = [self.title, self.author, self.content, self.likes]
         if self.comments is None:
             return output
         for comment in self.comments:
@@ -61,8 +119,11 @@ class Post:
         return output
 
     def __str__(self):
-        string = f"Title: {self.title}\n"
-        string += f"Content: {self.content}\n"
+        string = f"Title: {self.title}\n" \
+                 f"Author: {self.author}\n" \
+                 f"Content: {self.content}\n" \
+                 f"Likes: {self.likes}\n" \
+                 f"Number of Comments: {self.num_comments}\n"
         if not self.comments:
             return string
         for i in range(len(self.comments)):
@@ -95,11 +156,17 @@ class Parser:
 
         # Parse post
         title = soup.find(class_="tit_area").find(class_="word-break").get_text(separator='. ')
+        author = soup.find(class_="tit_area").find(class_="user").get_text(separator='. ')
         post_content = soup.find(class_="detail word-break").find("p").get_text(separator='. ')
+        likes = soup.find(class_="info").find(class_='like').get_text(separator='. ')
+        num_comments = soup.find(class_="info").find(class_='comment').get_text(separator='. ')
 
         # Populates Post with parsed data
         self.post.set_title(title)
+        self.post.set_author(author)
         self.post.set_content(post_content)
+        self.post.set_likes(likes)
+        self.post.set_num_comments(num_comments)
 
         # Parse comments and replies
         comments = soup.find(class_="topic_comments_wrap").find("ul").findChildren("li", recursive=False)
@@ -108,13 +175,28 @@ class Parser:
 
         for i in range(len(comments)):
             comment = Comment()
-            comment.set_content(comments[i].find(class_="detail").find("span").get_text(separator='. '))
+            comment_author = comments[i].find(class_="writer").find(class_="user").get_text(separator='. ')
+            comment_content = comments[i].find(class_="detail").find("span").get_text(separator='. ')
+            comment_likes = comments[i].find(class_="info").find(class_='like').get_text(separator='. ')
+            comment_num_replies = comments[i].find(class_="info").find(class_='comment').get_text(separator='. ')
+            comment.set_author(comment_author)
+            comment.set_content(comment_content)
+            comment.set_likes(comment_likes)
+            comment.set_num_replies(comment_num_replies)
+
             replies = comments[i].find_all(class_="reply")[1].findChild("ul").findChildren("li", recursive=False)
             if not replies:
                 self.post.add_comment(comment)
                 continue
             for j in range(min(len(replies), 5)):
-                comment.add_reply(replies[j].find(class_="detail").find("span").get_text(separator='. '))
+                reply = Reply()
+                reply_author = replies[j].find(class_="writer").find(class_="user").get_text(separator='. ')
+                reply_content = replies[j].find(class_="detail").find("span").get_text(separator='. ')
+                reply_likes = replies[j].find(class_="info").find(class_='like').get_text(separator='. ')
+                reply.set_author(reply_author)
+                reply.set_content(reply_content)
+                reply.set_likes(reply_likes)
+                comment.add_reply(reply)
             self.post.add_comment(comment)
 
 
