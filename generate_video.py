@@ -4,6 +4,8 @@ from os.path import isfile, join
 import re
 import random
 
+from moviepy.video.fx.mirror_x import mirror_x
+
 
 def add_image_to_audio(image_path, audio_path, output_path):
     """Create and save a video file to `output_path` after
@@ -72,7 +74,7 @@ def generate_video_from_clips(post_id):
     bg_video = VideoFileClip(f'./bg-video/bg-video{random.randint(0,6)}.mp4')
     bg_video = bg_video.rotate(90)
     if random.randint(0, 2):
-        bg_video = bg_video.mirror_x()
+        bg_video = mirror_x(bg_video)
     while bg_video.duration < video_with_final_audio.duration:
         bg_video = concatenate_videoclips([bg_video, bg_video])
     video_final = CompositeVideoClip([bg_video, video_with_final_audio.set_position('center')], use_bgclip=True)

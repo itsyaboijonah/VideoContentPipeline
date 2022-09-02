@@ -3,7 +3,6 @@ import os
 from scraper import dump_to_pickle
 
 
-# TODO: Add username to each post/comment/reply so that different tts voices can be used for each commenter
 class Reply:
 
     def __init__(self):
@@ -21,8 +20,11 @@ class Reply:
         self.likes = num_likes
 
     def flatten(self):
-        output = [self.author, self.content, self.likes]
+        output = [(self.author, self.content)]
         return output
+
+    def get_author(self):
+        return self.author
 
     def __str__(self):
         string = f"  Reply:\n" \
@@ -60,12 +62,20 @@ class Comment:
         self.replies.append(reply)
 
     def flatten(self):
-        output = [self.author, self.content, self.likes]
+        output = [(self.author, self.content)]
         if self.replies is None:
             return output
         for reply in self.replies:
-            output.append(reply.flatten())
+            output += reply.flatten()
         return output
+
+    def get_authors(self):
+        authors = [self.author]
+        if self.replies is None:
+            return authors
+        for reply in self.replies:
+            authors.append(reply.get_author())
+        return authors
 
     def __str__(self):
         string = f"Comment:\n" \
@@ -111,12 +121,20 @@ class Post:
         self.comments.append(comment)
 
     def flatten(self):
-        output = [self.title, self.author, self.content, self.likes]
+        output = [(self.author, self.title), (self.author, self.content)]
         if self.comments is None:
             return output
         for comment in self.comments:
             output += comment.flatten()
         return output
+
+    def get_authors(self):
+        authors = [self.author]
+        if self.comments is None:
+            return authors
+        for comment in self.comments:
+            authors += comment.get_authors()
+        return authors
 
     def __str__(self):
         string = f"Title: {self.title}\n" \
