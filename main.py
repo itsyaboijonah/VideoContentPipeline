@@ -48,7 +48,8 @@ if __name__ == "__main__":
 
     # TODO: Can create unused/already_used lists for each stage of the pipeline to assist with parallelization
     # TODO: Need to create way of ranking/analyzing posts (num comments, num replies, avg length of each, etc) so that good posts can be prioritized
-
+    # TODO: Enhance code documentation
+    # TODO: Add logging
     unused, already_used = [], []
     for post_id in listdir(f"./posts/"):
         if isdir(f"./posts/{post_id}/screenshots") and len(post_id) == 8:
@@ -56,7 +57,7 @@ if __name__ == "__main__":
         elif len(post_id) == 8:
             unused.append(post_id)
 
-    new_post_ids = scraper.scrape(already_used)
+    new_post_ids = scraper.scrape(already_used, 5)
     unused.extend(new_post_ids)
 
     for post_id in unused[:num_posts_to_process]:

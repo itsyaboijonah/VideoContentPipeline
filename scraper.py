@@ -111,7 +111,7 @@ class Scraper:
         file.close()
 
 
-def scrape(already_used):
+def scrape(already_used, num_to_scrape):
     print("Starting scraper...")
     scraper = Scraper()
     print("Scraper initialized! Logged in is " + str(scraper.is_logged_in))
@@ -119,7 +119,7 @@ def scrape(already_used):
     scraper.pull_hot_posts(already_used)
     print("Done! The following URLs were pulled:")
     scraper.print_hot_posts()
-    post_ids = list(scraper.hot_posts_urls.keys())
+    post_ids = list(scraper.hot_posts_urls.keys())[:num_to_scrape]
     for post_id in post_ids:
         print(f"Scraping data for Post ID {post_id}")
         scraper.pull_post_and_comments(scraper.hot_posts_urls[post_id])
