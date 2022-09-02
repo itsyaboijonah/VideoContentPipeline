@@ -7,7 +7,7 @@ import os, sys, random
 
 session = Session(profile_name='polly_tts_user')
 polly = session.client('polly', region_name='us-east-2')
-polly_voices = ['Nicole', 'Russell', 'Amy', 'Emma', 'Brian', 'Arthur', 'Aditi', 'Raveena', 'Ivy', 'Joanna', 'Kendra', 'Kimberly', 'Salli', 'Joey', 'Justin', 'Matthew', 'Geraint']
+polly_voices = ['Nicole', 'Russell', 'Amy', 'Emma', 'Brian', 'Aditi', 'Raveena', 'Ivy', 'Joanna', 'Kendra', 'Kimberly', 'Salli', 'Joey', 'Justin', 'Matthew', 'Geraint']
 
 
 def render(text_to_render, tts_voice_name, output_filename):
