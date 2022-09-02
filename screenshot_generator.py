@@ -24,15 +24,27 @@ def generate_screenshots(post_id):
     title.screenshot(f"./posts/{post_id}/screenshots/{cur_screenshot}.png")
     cur_screenshot += 1
 
-    post = driver.find_element(By.CLASS_NAME, "article.seo").find_element(By.CLASS_NAME, "detail.word-break")
+    post = driver.find_element(By.CLASS_NAME, "article.seo").find_element(By.CLASS_NAME, "detail.word-break").find_element(By.ID, "contentArea")
     post.screenshot(f"./posts/{post_id}/screenshots/{cur_screenshot}.png")
     cur_screenshot += 1
 
+    attachment = driver.find_element(By.CLASS_NAME, "article.seo").find_element(By.CLASS_NAME, "detail.word-break").find_elements(By.CLASS_NAME, "attach")
+    if attachment:
+        attachment_src = attachment[0].find_element(By.TAG_NAME, "div").find_element(By.TAG_NAME, "img").get_attribute("src")
+        driver.get(attachment_src)
+        driver.find_element(By.TAG_NAME, "img").screenshot(f"./posts/{post_id}/screenshots/{cur_screenshot}.png")
+        driver.back()
+        cur_screenshot += 1
+
     comments = driver.find_element(By.CLASS_NAME, "topic_comments_wrap").find_element(By.TAG_NAME, "ul").find_elements(By.XPATH, "./child::*")
     for i in range(len(comments)):
+        if comments[i].find_elements(By.CLASS_NAME, "blocked"):
+            continue
         comments[i].find_element(By.CLASS_NAME, "content").screenshot(f"./posts/{post_id}/screenshots/{cur_screenshot}.png")
         cur_screenshot += 1
         replies = comments[i].find_elements(By.CLASS_NAME, "reply")[1].find_element(By.TAG_NAME, "ul").find_elements(By.XPATH, "./child::*")
         for j in range(min(len(replies), 5)):
+            if replies[j].find_elements(By.CLASS_NAME, "blocked"):
+                continue
             replies[j].find_element(By.CLASS_NAME, "content").screenshot(f"./posts/{post_id}/screenshots/{cur_screenshot}.png")
             cur_screenshot += 1

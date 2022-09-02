@@ -192,6 +192,8 @@ class Parser:
             return
 
         for i in range(len(comments)):
+            if comments[i].find(class_="blocked"):
+                continue
             comment = Comment()
             comment_author = comments[i].find(class_="writer").find(class_="user").get_text(separator='. ')
             comment_content = comments[i].find(class_="detail").find("span").get_text(separator='. ')
@@ -207,6 +209,8 @@ class Parser:
                 self.post.add_comment(comment)
                 continue
             for j in range(min(len(replies), 5)):
+                if replies[j].find(class_="blocked"):
+                    continue
                 reply = Reply()
                 reply_author = replies[j].find(class_="writer").find(class_="user").get_text(separator='. ')
                 reply_content = replies[j].find(class_="detail").find("span").get_text(separator='. ')
