@@ -1,9 +1,9 @@
-from post_parser import Post, Comment, Reply
-from scraper import load_from_pickle
+from scripts.post_parser import Post, Comment, Reply
+from scripts.scraper import load_from_pickle
 from boto3 import Session
 from botocore.exceptions import BotoCoreError, ClientError
 from contextlib import closing
-import os, sys, random
+import os, sys, random, paths
 
 session = Session(profile_name='polly_tts_user')
 polly = session.client('polly', region_name='us-east-2')
@@ -43,17 +43,17 @@ def render(text_to_render, tts_voice_name, output_filename):
 
 
 def generate_audio(post_id):
-    post = load_from_pickle(f"./posts/{post_id}/parsed_post.pkl")
+    post = load_from_pickle(f"{paths.posts_path}{post_id}/parsed_post.pkl")
     author_voices = {}
     post_authors = post.get_authors()
     for author in post_authors:
         if author not in author_voices:
             author_voices[author] = random.choice(polly_voices)
 
-    os.makedirs(f"./posts/{post_id}/tts_audio", exist_ok=True)
+    os.makedirs(f"{paths.posts_path}{post_id}/tts_audio", exist_ok=True)
     for i, (author, content) in enumerate(post.flatten()):
         print(f"Processing audio sample #{i}...")
         print(f"Author: {author}\n"
               f"Content: {content}")
-        render(content, author_voices[author], f"./posts/{post_id}/tts_audio/{i}.mp3")
+        render(content, author_voices[author], f"{paths.posts_path}{post_id}/tts_audio/{i}.mp3")
         print(f"Done rendering audio sample #{i}!")

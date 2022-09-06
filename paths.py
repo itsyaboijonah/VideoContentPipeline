@@ -1,0 +1,6 @@
+project_path = "/Users/jonah/PycharmProjects/VideoContentPipeline/"
+scripts_path = project_path + "scripts/"
+posts_path = project_path + "posts/"
+bg_video_path = project_path + "bg-video/"
+blind_home_URL = "https://www.teamblind.com"
+archives_path = project_path + "archives/"

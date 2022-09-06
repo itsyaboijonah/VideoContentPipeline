@@ -1,17 +1,18 @@
 from PIL import Image
 from os import listdir
 from os.path import isfile, join
+import paths
 
 resize_factor = 1.8
 
 
 def process_screenshots(post_id):
     # Gets list of png filenames to edit
-    files = [filename for filename in listdir(f"./posts/{post_id}/screenshots/") if isfile(join(f"./posts/{post_id}/screenshots/", filename)) and (filename[-3:] == "png")]
+    files = [filename for filename in listdir(f"{paths.posts_path}{post_id}/screenshots/") if isfile(join(f"{paths.posts_path}{post_id}/screenshots/", filename)) and (filename[-3:] == "png")]
 
     # Add padding to each png and save the result
     for filename in files:
-        image = Image.open(f"./posts/{post_id}/screenshots/{filename}")
+        image = Image.open(f"{paths.posts_path}{post_id}/screenshots/{filename}")
         rgb = image.convert('RGB')
         r, g, b = rgb.getpixel((1, 1))
         width, height = image.size
@@ -26,4 +27,4 @@ def process_screenshots(post_id):
             processed_image.paste(temp_image, (0, 0))
         image.close()
         resized_image = processed_image.resize((int(round(resize_factor*processed_image.width)), int(round(resize_factor*processed_image.height))), Image.ANTIALIAS)
-        resized_image.save(f"./posts/{post_id}/screenshots/{filename}", "png")
+        resized_image.save(f"{paths.posts_path}{post_id}/screenshots/{filename}", "png")

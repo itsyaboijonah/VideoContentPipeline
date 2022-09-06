@@ -1,4 +1,5 @@
 import time
+import paths
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
@@ -7,44 +8,43 @@ from selenium.webdriver.chrome.options import Options
 
 
 def generate_screenshots(post_id):
-    path_to_project = "/Users/jonah/PycharmProjects/VideoContentPipeline"
-    os.makedirs(f"./posts/{post_id}/screenshots", exist_ok=True)
+    os.makedirs(f"{paths.posts_path}{post_id}/screenshots", exist_ok=True)
     cur_screenshot = 0
 
     caps = DesiredCapabilities().CHROME
     caps["pageLoadStrategy"] = "eager"  # interactive
     opt = Options()
-    opt.add_extension("./4.9.57_0.crx")
+    opt.add_extension(f"{paths.project_path}/4.9.57_0.crx")
     driver = webdriver.Chrome(desired_capabilities=caps, options=opt)
 
-    driver.get(f"file://{path_to_project}/posts/{post_id}/page_source.html")
+    driver.get(f"file://{paths.project_path}/posts/{post_id}/page_source.html")
     time.sleep(2)
     # post_elem = driver.find_element(By.XPATH, "/html/body/div[1]/div/main/div[2]/section/div/div/div[2]/section/div[1]")
     title = driver.find_element(By.CLASS_NAME, "article.seo").find_element(By.CLASS_NAME, "tit_area")
-    title.screenshot(f"./posts/{post_id}/screenshots/{cur_screenshot}.png")
+    title.screenshot(f"{paths.posts_path}{post_id}/screenshots/{cur_screenshot}.png")
     cur_screenshot += 1
 
     post = driver.find_element(By.CLASS_NAME, "article.seo").find_element(By.CLASS_NAME, "detail.word-break").find_element(By.ID, "contentArea")
-    post.screenshot(f"./posts/{post_id}/screenshots/{cur_screenshot}.png")
+    post.screenshot(f"{paths.posts_path}{post_id}/screenshots/{cur_screenshot}.png")
     cur_screenshot += 1
 
     attachment = driver.find_element(By.CLASS_NAME, "article.seo").find_element(By.CLASS_NAME, "detail.word-break").find_elements(By.CLASS_NAME, "attach")
     if attachment:
         attachment_src = attachment[0].find_element(By.TAG_NAME, "div").find_element(By.TAG_NAME, "img").get_attribute("src")
         driver.get(attachment_src)
-        driver.find_element(By.TAG_NAME, "img").screenshot(f"./posts/{post_id}/screenshots/{cur_screenshot}.png")
+        driver.find_element(By.TAG_NAME, "img").screenshot(f"{paths.posts_path}{post_id}/screenshots/{cur_screenshot}.png")
         driver.back()
         cur_screenshot += 1
 
-    comments = driver.find_element(By.CLASS_NAME, "topic_comments_wrap").find_element(By.TAG_NAME, "ul").find_elements(By.XPATH, "./child::*")
+    comments = driver.find_element(By.CLASS_NAME, "topic_comments_wrap").find_element(By.TAG_NAME, "ul").find_elements(By.XPATH, "../child::*")[1].find_elements(By.TAG_NAME, "li")
     for i in range(len(comments)):
         if comments[i].find_elements(By.CLASS_NAME, "blocked"):
             continue
-        comments[i].find_element(By.CLASS_NAME, "content").screenshot(f"./posts/{post_id}/screenshots/{cur_screenshot}.png")
+        comments[i].find_element(By.CLASS_NAME, "content").screenshot(f"{paths.posts_path}{post_id}/screenshots/{cur_screenshot}.png")
         cur_screenshot += 1
-        replies = comments[i].find_elements(By.CLASS_NAME, "reply")[1].find_element(By.TAG_NAME, "ul").find_elements(By.XPATH, "./child::*")
+        replies = comments[i].find_elements(By.CLASS_NAME, "reply")[1].find_element(By.TAG_NAME, "ul").find_elements(By.XPATH, "../child::*")
         for j in range(min(len(replies), 5)):
             if replies[j].find_elements(By.CLASS_NAME, "blocked"):
                 continue
-            replies[j].find_element(By.CLASS_NAME, "content").screenshot(f"./posts/{post_id}/screenshots/{cur_screenshot}.png")
+            replies[j].find_element(By.CLASS_NAME, "content").screenshot(f"{paths.posts_path}{post_id}/screenshots/{cur_screenshot}.png")
             cur_screenshot += 1

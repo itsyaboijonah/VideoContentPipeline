@@ -1,12 +1,7 @@
 from os import listdir, makedirs
 from os.path import isfile, isdir
-import shutil
-import scraper
-import post_parser
-import screenshot_generator
-import process_screenshots
-import generate_audio
-import generate_video
+import shutil, paths
+from scripts import scraper, post_parser, screenshot_generator, process_screenshots, generate_audio, generate_video
 
 num_posts_to_process = 1
 
@@ -31,8 +26,8 @@ def generate_post_video(post_id):
 
 
 def archive_post(post_id):
-    makedirs(f"./archives", exist_ok=True)
-    shutil.move(f'./posts/{post_id}', f'./archives/{post_id}')
+    makedirs(paths.archives_path, exist_ok=True)
+    shutil.move(f'{paths.posts_path}{post_id}', f'{paths.archives_path}{post_id}')
 
 
 def post_pipeline(post_id):
@@ -51,8 +46,8 @@ if __name__ == "__main__":
     # TODO: Enhance code documentation
     # TODO: Add logging
     unused, already_used = [], []
-    for post_id in listdir(f"./posts/"):
-        if isdir(f"./posts/{post_id}/screenshots") and len(post_id) == 8:
+    for post_id in listdir(f"{paths.posts_path}"):
+        if isdir(f"{paths.posts_path}{post_id}/screenshots") and len(post_id) == 8:
             already_used.append(post_id)
         elif len(post_id) == 8:
             unused.append(post_id)

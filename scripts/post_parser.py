@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
-import os
-from scraper import dump_to_pickle
+import os, paths
+from scripts.scraper import dump_to_pickle
 
 
 class Reply:
@@ -157,7 +157,7 @@ class Parser:
         self.post = None
 
     def load_page_source(self, post_id):
-        file = open(f"./posts/{post_id}/page_source.html", "r")
+        file = open(f"{paths.posts_path}{post_id}/page_source.html", "r")
         page_source = file.read()
         file.close()
         self.page_source = page_source
@@ -232,5 +232,5 @@ def parse(post_id):
     print(f"Done! Parsed Post object has been created:")
     print(str(parser.post))
     print("Dumping Post to pickle...")
-    dump_to_pickle(f"./posts/{post_id}/parsed_post.pkl", parser.post)
+    dump_to_pickle(f"{paths.posts_path}{post_id}/parsed_post.pkl", parser.post)
     print("Done Parsing!")
