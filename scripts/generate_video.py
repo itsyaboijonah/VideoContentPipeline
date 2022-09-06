@@ -63,14 +63,14 @@ def generate_video_from_clips(post_id):
     video_with_voiceover = concatenate_videoclips(video_clips, method="compose", padding=0.5)
     video_voiceover = video_with_voiceover.audio
     # video_voiceover.write_audiofile(filename='../test.wav', fps=22000, codec='pcm_s16le', bitrate='50k')
-    bgm = AudioFileClip("../bg-music/Ghostrifter-Official-Devyzed-Downtown-Glow.mp3")
+    bgm = AudioFileClip(f"{paths.bg_music_path}Ghostrifter-Official-Devyzed-Downtown-Glow.mp3")
     while bgm.duration < video_voiceover.duration:
         bgm = concatenate_audioclips([bgm, bgm])
     bgm = bgm.set_end(video_voiceover.duration + 2)
 
     new_video_audio = CompositeAudioClip([video_voiceover, bgm.volumex(0.2)])
     video_with_final_audio = video_with_voiceover.set_audio(new_video_audio)
-    bg_video = VideoFileClip(f'../bg-video/bg-video{random.randint(0,6)}.mp4')
+    bg_video = VideoFileClip(f'{paths.bg_video_path}bg-video{random.randint(0,6)}.mp4')
     bg_video = bg_video.rotate(90)
     if random.randint(0, 2):
         bg_video = mirror_x(bg_video)
@@ -79,8 +79,8 @@ def generate_video_from_clips(post_id):
     video_final = CompositeVideoClip([bg_video, video_with_final_audio.set_position('center')], use_bgclip=True)
     # video_final = fadeout(video_final, 2)
     # Tuned codec and bitrate for better quality/filesize ratio
-    makedirs(f"../videos", exist_ok=True)
-    video_final.write_videofile(f"../videos/{post_id}.mp4", codec='libx264', bitrate='3000k')
+    makedirs(f"{paths.output_videos_path}", exist_ok=True)
+    video_final.write_videofile(f"{paths.output_videos_path}{post_id}.mp4", codec='libx264', bitrate='3000k')
 
 
 def generate_video(post_id):

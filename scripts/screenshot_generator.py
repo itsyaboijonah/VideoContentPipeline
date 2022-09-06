@@ -17,7 +17,7 @@ def generate_screenshots(post_id):
     opt.add_extension(f"{paths.project_path}/4.9.57_0.crx")
     driver = webdriver.Chrome(desired_capabilities=caps, options=opt)
 
-    driver.get(f"file://{paths.project_path}/posts/{post_id}/page_source.html")
+    driver.get(f"file://{paths.posts_path}{post_id}/page_source.html")
     time.sleep(2)
     # post_elem = driver.find_element(By.XPATH, "/html/body/div[1]/div/main/div[2]/section/div/div/div[2]/section/div[1]")
     title = driver.find_element(By.CLASS_NAME, "article.seo").find_element(By.CLASS_NAME, "tit_area")
@@ -36,13 +36,13 @@ def generate_screenshots(post_id):
         driver.back()
         cur_screenshot += 1
 
-    comments = driver.find_element(By.CLASS_NAME, "topic_comments_wrap").find_element(By.TAG_NAME, "ul").find_elements(By.XPATH, "../child::*")[1].find_elements(By.TAG_NAME, "li")
+    comments = driver.find_element(By.CLASS_NAME, "topic_comments_wrap").find_element(By.TAG_NAME, "ul").find_elements(By.XPATH, "./child::*")
     for i in range(len(comments)):
         if comments[i].find_elements(By.CLASS_NAME, "blocked"):
             continue
         comments[i].find_element(By.CLASS_NAME, "content").screenshot(f"{paths.posts_path}{post_id}/screenshots/{cur_screenshot}.png")
         cur_screenshot += 1
-        replies = comments[i].find_elements(By.CLASS_NAME, "reply")[1].find_element(By.TAG_NAME, "ul").find_elements(By.XPATH, "../child::*")
+        replies = comments[i].find_elements(By.CLASS_NAME, "reply")[1].find_element(By.TAG_NAME, "ul").find_elements(By.XPATH, "./child::*")
         for j in range(min(len(replies), 5)):
             if replies[j].find_elements(By.CLASS_NAME, "blocked"):
                 continue
