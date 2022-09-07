@@ -8,7 +8,7 @@ from selenium.webdriver.chrome.options import Options
 import paths
 
 
-credentials_file = open(f"{paths.project_path}/blind_credentials", "r")
+credentials_file = open(f"{paths.project_path}blind_credentials", "r")
 credentials = credentials_file.readlines()
 credentials = list(map(str.strip, credentials))
 credentials_file.close()
@@ -25,6 +25,9 @@ def load_from_pickle(filename):
     data = pickle.load(file)
     file.close()
     return data
+
+# TODO: Modify procedure to batch scrape posts (as many as there are) and put the parsed pkls in a new dir,
+#  making ranking easier
 
 
 class Scraper:
