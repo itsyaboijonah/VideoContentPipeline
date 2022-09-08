@@ -60,7 +60,7 @@ def generate_video_from_clips(post_id):
     video_clips = load_video_clips(post_id)
     # Pad the final clip
     video_clips[-1] = video_clips[-1].set_end(video_clips[-1].end + 2).set_duration(video_clips[-1].duration + 2).set_audio(CompositeAudioClip([video_clips[-1].audio, AudioClip(lambda t: 0, duration=2)]))
-    video_with_voiceover = concatenate_videoclips(video_clips, method="compose", padding=0.5)
+    video_with_voiceover = concatenate_videoclips(video_clips, method="compose")
     video_voiceover = video_with_voiceover.audio
     # video_voiceover.write_audiofile(filename='../test.wav', fps=22000, codec='pcm_s16le', bitrate='50k')
     bgm = AudioFileClip(f"{paths.bg_music_path}Ghostrifter-Official-Devyzed-Downtown-Glow.mp3")

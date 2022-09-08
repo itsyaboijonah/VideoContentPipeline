@@ -36,7 +36,7 @@ class Scraper:
         caps = DesiredCapabilities().CHROME
         caps["pageLoadStrategy"] = "eager"  # interactive
         opt = Options()
-        opt.add_extension("../4.9.57_0.crx")
+        opt.add_extension(paths.scraper_dark_mode_extension_path)
         self.driver = webdriver.Chrome(desired_capabilities=caps, options=opt)
         self.hot_posts_urls = None
         self.is_logged_in = False
@@ -77,7 +77,7 @@ class Scraper:
         for id in self.hot_posts_urls.keys():
             print(id, self.hot_posts_urls[id])
 
-    def pull_hot_posts(self, already_used):
+    def pull_hot_posts(self):
         self.driver.get("https://www.teamblind.com/topics/Industries/Tech")
         time.sleep(3)
         elem = self.driver.find_element(By.XPATH, "/html/body/div[1]/div/main/div[2]/section/div/div/div[2]/ul")
@@ -87,10 +87,9 @@ class Scraper:
             # https://stackoverflow.com/questions/19664253/selenium-how-to-get-the-content-of-href-within-some-targeted-class
             url = item.find_element(By.CSS_SELECTOR, "a").get_attribute("href")
             post_id = url[-8:]
-            if post_id not in already_used:
-                self.hot_posts_urls[post_id] = url
+            self.hot_posts_urls[post_id] = url
 
-    def pull_post_and_comments(self, post_url):
+    def pull_post_and_comments(self, post_url, batch_dir_name):
         try:
             if not self.is_logged_in:
                 self.login()
@@ -109,8 +108,7 @@ class Scraper:
 
             expanded_page_source = self.driver.page_source
             post_id = post_url[-8:]
-            os.makedirs(f"../posts/{post_id}", exist_ok=True)
-            file = open(f"../posts/{post_id}/page_source.html", "w")
+            file = open(f"{batch_dir_name}/html/{post_id}.html", "w")
             file.write(expanded_page_source)
             file.close()
         except:
@@ -118,18 +116,22 @@ class Scraper:
             return
 
 
-def scrape(already_used, num_to_scrape):
+def scrape():
     print("Starting scraper...")
     scraper = Scraper()
     print("Scraper initialized! Logged in is " + str(scraper.is_logged_in))
     print("Pulling hot posts in the Tech category...")
-    scraper.pull_hot_posts(already_used)
+    scraper.pull_hot_posts()
     print("Done! The following URLs were pulled:")
     scraper.print_hot_posts()
-    post_ids = list(scraper.hot_posts_urls.keys())[:num_to_scrape]
+    post_ids = list(scraper.hot_posts_urls.keys())
+    batch_dir_name = f"{paths.batch_scrapes_path}{time.strftime('%Y%m%d-%H%M%S')}/"
+    os.makedirs(f"{batch_dir_name}html", exist_ok=True)
+    os.makedirs(f"{batch_dir_name}parsed", exist_ok=True)
+    os.makedirs(f"{batch_dir_name}data", exist_ok=True)
     for post_id in post_ids:
         print(f"Scraping data for Post ID {post_id}")
-        scraper.pull_post_and_comments(scraper.hot_posts_urls[post_id])
+        scraper.pull_post_and_comments(scraper.hot_posts_urls[post_id], batch_dir_name)
         print("Scraping Done!")
     scraper.quit()
-    return post_ids
+    return batch_dir_name

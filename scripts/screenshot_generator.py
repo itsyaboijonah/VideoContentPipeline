@@ -7,7 +7,7 @@ import os
 from selenium.webdriver.chrome.options import Options
 
 
-def generate_screenshots(post_id):
+def generate_screenshots(batch_name, post_id):
     os.makedirs(f"{paths.posts_path}{post_id}/screenshots", exist_ok=True)
     cur_screenshot = 0
 
@@ -17,7 +17,7 @@ def generate_screenshots(post_id):
     opt.add_extension(f"{paths.project_path}/4.9.57_0.crx")
     driver = webdriver.Chrome(desired_capabilities=caps, options=opt)
 
-    driver.get(f"file://{paths.posts_path}{post_id}/page_source.html")
+    driver.get(f"file://{paths.batch_scrapes_path}{batch_name}/html/{post_id}.html")
     time.sleep(2)
     # post_elem = driver.find_element(By.XPATH, "/html/body/div[1]/div/main/div[2]/section/div/div/div[2]/section/div[1]")
     title = driver.find_element(By.CLASS_NAME, "article.seo").find_element(By.CLASS_NAME, "tit_area")

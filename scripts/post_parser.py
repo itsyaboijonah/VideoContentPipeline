@@ -1,3 +1,5 @@
+from os.path import isfile
+
 from bs4 import BeautifulSoup
 import os, paths
 from scripts.scraper import dump_to_pickle
@@ -8,7 +10,7 @@ class Reply:
     def __init__(self):
         self.author = None
         self.content = None
-        self.likes = None
+        self.likes = 0
 
     def set_author(self, author):
         self.author = author
@@ -40,8 +42,8 @@ class Comment:
 
         self.author = None
         self.content = None
-        self.likes = None
-        self.num_replies = None
+        self.likes = 0
+        self.num_replies = 0
         self.replies = None
 
     def set_author(self, author):
@@ -96,8 +98,8 @@ class Post:
         self.title = None
         self.author = None
         self.content = None
-        self.likes = None
-        self.num_comments = None
+        self.likes = 0
+        self.num_comments = 0
         self.comments = None
 
     def set_title(self, title):
@@ -156,12 +158,12 @@ class Parser:
         self.page_source = None
         self.post = None
 
-    def load_page_source(self, post_id):
-        file = open(f"{paths.posts_path}{post_id}/page_source.html", "r")
+    def load_page_source(self, batch_name, html_file):
+        file = open(f"{paths.batch_scrapes_path}{batch_name}/html/{html_file}", "r")
         page_source = file.read()
         file.close()
         self.page_source = page_source
-        self.post_id = post_id
+        self.post_id = html_file.split('.')[0]
 
     def parse_page_source(self):
         # Create Post object
@@ -222,15 +224,34 @@ class Parser:
             self.post.add_comment(comment)
 
 
-def parse(post_id):
-    print("Starting parser...")
+# def parse(post_id):
+#     print("Starting parser...")
+#     parser = Parser()
+#     print("Done! Loading page source...")
+#     parser.load_page_source(post_id)
+#     print(f"Page source loaded for {post_id}. Parsing...")
+#     parser.parse_page_source()
+#     print(f"Done! Parsed Post object has been created:")
+#     print(str(parser.post))
+#     print("Dumping Post to pickle...")
+#     dump_to_pickle(f"{paths.posts_path}{post_id}/parsed_post.pkl", parser.post)
+#     print("Done Parsing!")
+
+
+def batch_parse(batch_name):
+    print("Starting parser for batch parse...")
     parser = Parser()
-    print("Done! Loading page source...")
-    parser.load_page_source(post_id)
-    print(f"Page source loaded for {post_id}. Parsing...")
-    parser.parse_page_source()
-    print(f"Done! Parsed Post object has been created:")
-    print(str(parser.post))
-    print("Dumping Post to pickle...")
-    dump_to_pickle(f"{paths.posts_path}{post_id}/parsed_post.pkl", parser.post)
-    print("Done Parsing!")
+    print("Done! Loading batch of files to parse...")
+    path_to_batch = paths.batch_scrapes_path + batch_name
+    files = [filename for filename in os.listdir(path_to_batch + "/html/") if
+             isfile(f"{path_to_batch}/html/{filename}") and (filename[-4:] == "html")]
+    print(files)
+    for file in files:
+        print(f"Parsing {file}...")
+        parser.load_page_source(batch_name, file)
+        parser.parse_page_source()
+        dump_to_pickle(f"{path_to_batch}/parsed/{file.split('.')[0]}.pkl", parser.post)
+        print(f"Done parsing {file}")
+    print("Done batch parse!")
+
+    # parser.load_page_source(post_id)

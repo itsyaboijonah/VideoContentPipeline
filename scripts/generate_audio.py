@@ -42,8 +42,8 @@ def render(text_to_render, tts_voice_name, output_filename):
         sys.exit(-1)
 
 
-def generate_audio(post_id):
-    post = load_from_pickle(f"{paths.posts_path}{post_id}/parsed_post.pkl")
+def generate_audio(batch_name, post_id):
+    post = load_from_pickle(f"{paths.batch_scrapes_path}{batch_name}/parsed/{post_id}.pkl")
     author_voices = {}
     post_authors = post.get_authors()
     for author in post_authors:
