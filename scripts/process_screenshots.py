@@ -17,8 +17,12 @@ def process_screenshots(post_id):
         r, g, b = rgb.getpixel((1, 1))
         width, height = image.size
         new_width = width + 40
-        processed_image = Image.new('RGB', (new_width, height), (r, g, b))
-        processed_image.paste(image, (20, 0))
+        if filename == '1.png':
+            processed_image = Image.new('RGB', (new_width, height + 40), (r, g, b))
+            processed_image.paste(image, (20, 20))
+        else:
+            processed_image = Image.new('RGB', (new_width, height), (r, g, b))
+            processed_image.paste(image, (20, 0))
         if filename == '0.png':
             width, height = processed_image.size
             temp_image = processed_image.crop((0, 20, width, height))
