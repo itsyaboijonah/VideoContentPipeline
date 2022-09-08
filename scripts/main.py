@@ -42,8 +42,6 @@ def post_pipeline(batch_name, post_id):
 
 if __name__ == "__main__":
 
-    # TODO: Can create unused/already_used lists for each stage of the pipeline to assist with parallelization
-    # TODO: Need to create way of ranking/analyzing posts (num comments, num replies, avg length of each, etc) so that good posts can be prioritized
     # TODO: Enhance code documentation
     # TODO: Add logging
 
