@@ -123,7 +123,14 @@ class Post:
         self.comments.append(comment)
 
     def flatten(self):
-        output = [(self.author, self.title), (self.author, self.content)]
+        output = [(self.author, self.title)]
+        # Checks if the post is in parts or one chunk, and appends accordingly
+        if type(self.content) == list:
+            for paragraph in self.content:
+                output.append((self.author, paragraph))
+        else:
+            output.append((self.author, self.content))
+
         if self.comments is None:
             return output
         for comment in self.comments:
@@ -177,7 +184,7 @@ class Parser:
         # Parse post
         title = soup.find(class_="tit_area").find(class_="word-break").get_text(separator='. ')
         author = soup.find(class_="tit_area").find(class_="user").get_text(separator='. ')
-        post_content = soup.find(class_="detail word-break").find("p").get_text(separator='. ')
+        post_content = [str(text) for text in soup.find(class_="detail word-break").find("p").find_all(text=True) if text.strip()]
         likes = soup.find(class_="info").find(class_='like').get_text(separator='. ')
         num_comments = soup.find(class_="info").find(class_='comment').get_text(separator='. ')
 
@@ -224,20 +231,6 @@ class Parser:
             self.post.add_comment(comment)
 
 
-# def parse(post_id):
-#     print("Starting parser...")
-#     parser = Parser()
-#     print("Done! Loading page source...")
-#     parser.load_page_source(post_id)
-#     print(f"Page source loaded for {post_id}. Parsing...")
-#     parser.parse_page_source()
-#     print(f"Done! Parsed Post object has been created:")
-#     print(str(parser.post))
-#     print("Dumping Post to pickle...")
-#     dump_to_pickle(f"{paths.posts_path}{post_id}/parsed_post.pkl", parser.post)
-#     print("Done Parsing!")
-
-
 def batch_parse(batch_name):
     print("Starting parser for batch parse...")
     parser = Parser()
@@ -254,4 +247,14 @@ def batch_parse(batch_name):
         print(f"Done parsing {file}")
     print("Done batch parse!")
 
-    # parser.load_page_source(post_id)
+
+def parse_post(batch_name, html_filename):
+    print("Starting parser for batch parse...")
+    parser = Parser()
+    print("Done! Loading batch of files to parse...")
+    path_to_batch = paths.batch_scrapes_path + batch_name
+    print(f"Parsing {html_filename}...")
+    parser.load_page_source(batch_name, html_filename)
+    parser.parse_page_source()
+    dump_to_pickle(f"{path_to_batch}/parsed/{html_filename.split('.')[0]}.pkl", parser.post)
+    print(f"Done parsing {html_filename}")
