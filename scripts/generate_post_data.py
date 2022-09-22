@@ -18,7 +18,7 @@ class ReplyData(Reply):
         if reply:
             self.author = reply.author
             self.content = reply.content
-            self.likes = int(reply.likes)
+            self.likes = int(reply.likes.replace(',', ''))
             self.calculate()
 
     def calculate(self):
@@ -40,8 +40,8 @@ class CommentData(Comment):
         if comment:
             self.author = comment.author
             self.content = comment.content
-            self.likes = int(comment.likes)
-            self.num_replies = int(comment.num_replies)
+            self.likes = int(comment.likes.replace(',', ''))
+            self.num_replies = int(comment.num_replies.replace(',', ''))
             self.replies = list(map(lambda x: ReplyData(x), comment.replies)) if comment.replies else None
             self.calculate()
 
@@ -117,8 +117,8 @@ class PostData(Post):
         self.title = post_pkl.title
         self.author = post_pkl.author
         self.content = post_pkl.content
-        self.likes = int(post_pkl.likes)
-        self.num_comments = int(post_pkl.num_comments)
+        self.likes = int(post_pkl.likes.replace(',', ''))
+        self.num_comments = int(post_pkl.num_comments.replace(',', ''))
         self.comments = list(map(lambda x: CommentData(x), post_pkl.comments)) if post_pkl.comments else None
         self.calculate()
 
@@ -137,3 +137,14 @@ def batch_analyze(batch_name):
         dump_to_pickle(f"{path_to_batch}/data/{file.split('.')[0]}.pkl", analyzer)
         print(f"Done analyzing {file}")
     print("Done batch analyze!")
+
+
+def post_analyze(batch_name, pkl_filename):
+    print("Starting analyzer for batch analysis...")
+    analyzer = PostData()
+    print("Done! Loading file to analyze...")
+    path_to_batch = paths.batch_scrapes_path + batch_name
+    print(f"Analyzing {pkl_filename}...")
+    analyzer.load_post_data(batch_name, pkl_filename)
+    dump_to_pickle(f"{path_to_batch}/data/{pkl_filename.split('.')[0]}.pkl", analyzer)
+    print(f"Done analyzing {pkl_filename}")
