@@ -2,11 +2,14 @@ from PIL import Image
 from os import listdir
 from os.path import isfile, join
 import paths
+from scripts.scraper import load_from_pickle
 
 resize_factor = 1.8
 
 
-def process_screenshots(post_id):
+def process_screenshots(batch_name, post_id):
+    post = load_from_pickle(f"{paths.batch_scrapes_path}{batch_name}/parsed/{post_id}.pkl")
+    post_parts = [f"{i+1}.png" for i in range(len(post.content))]
     # Gets list of png filenames to edit
     files = [filename for filename in listdir(f"{paths.posts_path}{post_id}/screenshots/") if isfile(join(f"{paths.posts_path}{post_id}/screenshots/", filename)) and (filename[-3:] == "png")]
 
@@ -17,7 +20,7 @@ def process_screenshots(post_id):
         r, g, b = rgb.getpixel((1, 1))
         width, height = image.size
         new_width = width + 40
-        if filename == '1.png':
+        if filename in post_parts:
             processed_image = Image.new('RGB', (new_width, height + 40), (r, g, b))
             processed_image.paste(image, (20, 20))
         else:
