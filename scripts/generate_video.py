@@ -41,11 +41,6 @@ def generate_clips_with_audio(post_id):
     video_clips = []
     for i in range(num_images):
         video_clips.append(add_image_to_audio(f"{paths.posts_path}{post_id}/screenshots/{i}.png", f"{paths.posts_path}{post_id}/tts_audio/{i}.mp3", f"{paths.posts_path}{post_id}/videoclips/{i}.avi"))
-    # if not isfile('../outro.mp4'):
-    #     add_image_to_audio('../outro.jpeg', '../outro.mp3', '../outro.mp4')
-    # video_clips.append(VideoFileClip('../outro.mp4'))
-    # video_clips.append(add_image_to_audio('../outro.jpeg', '../outro.mp3', '../outro.mp4'))
-    # video_clips.append(VideoFileClip('../outro.mp4'))
     return video_clips
 
 
@@ -62,15 +57,18 @@ def generate_video_from_clips(post_id):
     video_clips[-1] = video_clips[-1].set_end(video_clips[-1].end + 2).set_duration(video_clips[-1].duration + 2).set_audio(CompositeAudioClip([video_clips[-1].audio, AudioClip(lambda t: 0, duration=2)]))
     video_with_voiceover = concatenate_videoclips(video_clips, method="compose")
     video_voiceover = video_with_voiceover.audio
-    # video_voiceover.write_audiofile(filename='../test.wav', fps=22000, codec='pcm_s16le', bitrate='50k')
-    bgm = AudioFileClip(f"{paths.bg_music_path}Ghostrifter-Official-Devyzed-Downtown-Glow.mp3")
+
+    # Handles adding the background music
+    available_bgm = [filename for filename in listdir(f"{paths.bg_music_path}") if
+                      isfile(join(paths.bg_music_path, filename))]
+    bgm = AudioFileClip(f"{paths.bg_music_path}{str(random.choice(available_bgm))}")
     while bgm.duration < video_voiceover.duration:
         bgm = concatenate_audioclips([bgm, bgm])
     bgm = bgm.set_end(video_voiceover.duration + 2)
 
     new_video_audio = CompositeAudioClip([video_voiceover, bgm.volumex(0.2)])
     video_with_final_audio = video_with_voiceover.set_audio(new_video_audio)
-    bg_video = VideoFileClip(f'{paths.bg_video_path}bg-video{random.randint(0,6)}.mp4')
+    bg_video = VideoFileClip(f'{paths.bg_video_path}bg-video{random.randint(0,5)}.mp4')
     bg_video = bg_video.rotate(90)
     if random.randint(0, 2):
         bg_video = mirror_x(bg_video)
