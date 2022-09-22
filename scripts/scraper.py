@@ -125,7 +125,8 @@ def scrape():
     print("Done! The following URLs were pulled:")
     scraper.print_hot_posts()
     post_ids = list(scraper.hot_posts_urls.keys())
-    batch_dir_name = f"{paths.batch_scrapes_path}{time.strftime('%Y%m%d-%H%M%S')}/"
+    batch_name = time.strftime('%Y%m%d-%H%M%S')
+    batch_dir_name = f"{paths.batch_scrapes_path}{batch_name}/"
     os.makedirs(f"{batch_dir_name}html", exist_ok=True)
     os.makedirs(f"{batch_dir_name}parsed", exist_ok=True)
     os.makedirs(f"{batch_dir_name}data", exist_ok=True)
@@ -134,4 +135,4 @@ def scrape():
         scraper.pull_post_and_comments(scraper.hot_posts_urls[post_id], batch_dir_name)
         print("Scraping Done!")
     scraper.quit()
-    return batch_dir_name
+    return batch_name
