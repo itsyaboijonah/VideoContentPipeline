@@ -3,6 +3,7 @@ from os.path import isfile
 from bs4 import BeautifulSoup
 import os, paths
 from scripts.scraper import dump_to_pickle
+from cleantext import clean
 
 
 class Reply:
@@ -182,9 +183,9 @@ class Parser:
             a.extract()
 
         # Parse post
-        title = soup.find(class_="tit_area").find(class_="word-break").get_text(separator='. ')
+        title = clean(soup.find(class_="tit_area").find(class_="word-break").get_text(separator='. '), no_emoji=True)
         author = soup.find(class_="tit_area").find(class_="user").get_text(separator='. ')
-        post_content = [str(text) for text in soup.find(class_="detail word-break").find("p").find_all(text=True) if text.strip()]
+        post_content = [clean(str(text), no_emoji=True) for text in soup.find(class_="detail word-break").find("p").find_all(text=True) if text.strip()]
         likes = soup.find(class_="info").find(class_='like').get_text(separator='. ')
         num_comments = soup.find(class_="info").find(class_='comment').get_text(separator='. ')
 
@@ -205,7 +206,7 @@ class Parser:
                 continue
             comment = Comment()
             comment_author = comments[i].find(class_="writer").find(class_="user").get_text(separator='. ')
-            comment_content = comments[i].find(class_="detail").find("span").get_text(separator='. ')
+            comment_content = clean(comments[i].find(class_="detail").find("span").get_text(separator='. '), no_emoji=True)
             comment_likes = comments[i].find(class_="info").find(class_='like').get_text(separator='. ')
             comment_num_replies = comments[i].find(class_="info").find(class_='comment').get_text(separator='. ')
             comment.set_author(comment_author)
@@ -222,7 +223,7 @@ class Parser:
                     continue
                 reply = Reply()
                 reply_author = replies[j].find(class_="writer").find(class_="user").get_text(separator='. ')
-                reply_content = replies[j].find(class_="detail").find("span").get_text(separator='. ')
+                reply_content = clean(replies[j].find(class_="detail").find("span").get_text(separator='. '), no_emoji=True)
                 reply_likes = replies[j].find(class_="info").find(class_='like').get_text(separator='. ')
                 reply.set_author(reply_author)
                 reply.set_content(reply_content)
