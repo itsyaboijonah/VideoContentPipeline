@@ -33,6 +33,7 @@ def archive_post(post_id):
 
 
 def post_pipeline(batch_name, post_id):
+    post_preprocess(batch_name, post_id)
     generate_post_screenshots(batch_name, post_id)
     process_post_screenshots(batch_name, post_id)
     generate_post_audio(batch_name, post_id)
@@ -64,6 +65,8 @@ if __name__ == "__main__":
 
     # TODO: Enhance code documentation
     # TODO: Add logging
+    # TODO: Big TODO is to encapsulate scraping/parsing/screenshot logic into config files, to allow extensibility to
+    #  other sites (Fishbowl, Reddit, etc)
 
     batch_name = scraper.scrape()
     post_parser.batch_parse(batch_name)
