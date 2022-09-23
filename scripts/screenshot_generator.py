@@ -31,7 +31,7 @@ def generate_screenshots(batch_name, post_id):
     post = driver.find_element(By.CLASS_NAME, "article.seo").find_element(By.CLASS_NAME, "detail.word-break").find_element(By.ID, "contentArea")
     post_parts = post_pkl.content
     for part in post_parts:
-        driver.execute_script("arguments[0].innerHTML=arguments[1];", post, part)
+        driver.execute_script("arguments[0].innerHTML=arguments[1];arguments[0].scrollIntoView({block: 'center'});", post, part)
         post.screenshot(f"{paths.posts_path}{post_id}/screenshots/{cur_screenshot}.png")
         cur_screenshot += 1
 
