@@ -60,7 +60,7 @@ def generate_video_from_clips(post_id):
 
     # Handles adding the background music
     available_bgm = [filename for filename in listdir(f"{paths.bg_music_path}") if
-                      isfile(join(paths.bg_music_path, filename))]
+                      isfile(join(paths.bg_music_path, filename)) and filename[-3:] == "wav"]
     bgm = AudioFileClip(f"{paths.bg_music_path}{str(random.choice(available_bgm))}")
     while bgm.duration < video_voiceover.duration:
         bgm = concatenate_audioclips([bgm, bgm])
