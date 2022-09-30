@@ -35,6 +35,7 @@ def generate_screenshots(batch_name, post_id):
         post.screenshot(f"{paths.posts_path}{post_id}/screenshots/{cur_screenshot}.png")
         cur_screenshot += 1
 
+    # TODO: Match numbering scheme with audio when an attachment is present
     attachment = driver.find_element(By.CLASS_NAME, "article.seo").find_element(By.CLASS_NAME, "detail.word-break").find_elements(By.CLASS_NAME, "attach")
     if attachment:
         attachment_src = attachment[0].find_element(By.TAG_NAME, "div").find_element(By.TAG_NAME, "img").get_attribute("src")
