@@ -1,4 +1,4 @@
-# VideoContentPipeline
+# Video Content Pipeline
 Video Content Pipeline project
 
 This project implements an automatic content creation pipeline for social media post TTS videos, as commonly seen on TikTok.
