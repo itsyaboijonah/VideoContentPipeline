@@ -6,6 +6,8 @@ This project implements an automatic content creation pipeline for social media 
 It is currently configured for scraping, parsing, and generating videos from posts on the popular professional networking app Blind.
 Alternate scrapers/parsers will be configured for other sites, such as Reddit or Facebook, to enhance the variety of content sources that can be used for video generation.
 
+Posts, comments, and replies are each algorithmically ranked based on their level of community engagement, and only the top n comments are rendered in the video.
+
 Additionally, users can provide custom background animations and accompanying music for the videos.
 The TTS voices for narrating the posts are generated using AWS Polly, and videos are created using MoviePy.
 
